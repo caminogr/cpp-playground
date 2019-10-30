@@ -1,2 +1,2 @@
 Compile proto file
-`protoc --cpp_out=./ ./greet.proto`
+`protoc --cpp_out=./ ./hello.proto`
