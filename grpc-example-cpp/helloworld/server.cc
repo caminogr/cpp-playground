@@ -1,19 +1,33 @@
 #include <iostream>
 #include <string>
 
-// hello.grpc.pb.hはどうやって作る？
-// hello.pb.hではないの？
-// #include "hello.grpc.pb.h"
+#include <grpcpp/grpcpp.h>
+#include "hello.grpc.pb.h"
 
-// using hello::Greeter;
+using grpc::Server;
+using grpc::ServerBuilder;
+using grpc::ServerContext;
+using grpc::Status;
 
-// class GreeterServiceImpl final : publc Greeter::Service {
+using hello::HelloRequest;
+using hello::HelloReply;
+using hello::Greeter;
 
-// }
+class GreeterServiceImpl final : public Greeter::Service {
+  Status SayHello(ServerContext* context, const HelloRequest* request, HelloReply* reply) override {
+    std::string prefix("Hello ");
+    reply->set_message(prefix + request->name());
+    return Status::OK;
+  }
+};
 
 void RunServer() {
   std::string server_address("0.0.0.0:50051");
-  // GreeterServiceImpl service;
+  GreeterServiceImpl service;
+  
+  ServerBuilder builder;
+  builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+  builder.RegisterService(&service);
 
 
   std::cout << "Server listening on " << server_address << std::endl;
